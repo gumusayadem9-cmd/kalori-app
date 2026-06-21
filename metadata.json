@@ -1,0 +1,6 @@
+{
+  "name": "Profesyonel Kalori Takipçisi",
+  "description": "Yapay zeka destekli, detaylı besin analizi ve dinamik hedef belirleme özelliklerine sahip profesyonel kalori ve makro takip uygulaması.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

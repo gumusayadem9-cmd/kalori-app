@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+/* Modern Custom Scrollbar Styling designed to match both Light and Dark modes */
+@layer base {
+  /* Webkit engines like Chrome, Safari, Edge, Opera */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Light mode scrollbar thumb */
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-slate-300, #cbd5e1);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: background-color 0.2s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-slate-400, #94a3b8);
+  }
+
+  /* Dark mode scrollbar thumb */
+  .dark ::-webkit-scrollbar-thumb,
+  :where(.dark) ::-webkit-scrollbar-thumb,
+  html.dark *::-webkit-scrollbar-thumb {
+    background-color: var(--color-slate-800, #1e293b);
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover,
+  :where(.dark) ::-webkit-scrollbar-thumb:hover,
+  html.dark *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-slate-700, #334155);
+  }
+
+  /* Standard Firefox Scrollbar values */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
+
+  .dark, .dark * {
+    scrollbar-color: #1e293b transparent;
+  }
+}
+
+

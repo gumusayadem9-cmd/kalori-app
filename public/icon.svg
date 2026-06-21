@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Rounded deep slate canvas backing to match active Pro dashboard theme -->
+  <rect width="512" height="512" rx="120" fill="#0f172a" />
+  
+  <!-- Outer calorie & step tracker ring shadow/track -->
+  <circle cx="256" cy="256" r="150" stroke="#1e293b" stroke-width="28" fill="none" />
+  
+  <!-- Active progress ring segment in glowing emerald-teal gradient -->
+  <path d="M 256 106 A 150 150 0 1 1 126 331" stroke="url(#arcGrad)" stroke-width="28" stroke-linecap="round" fill="none" />
+  
+  <!-- Center health/activity symbol: stylized glowing dynamic wellness leaf & path -->
+  <path d="M 256 170 C 206 170 188 225 224 278 C 233 291 246 305 256 314 C 266 305 279 291 288 278 C 324 225 306 170 256 170 Z" fill="url(#centerGrad)" />
+  <path d="M 256 314 L 256 345" stroke="#10b981" stroke-width="14" stroke-linecap="round" />
+  
+  <defs>
+    <!-- Beautiful gradient pairings to define the visual craft of NutriPro -->
+    <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#0d9488" />
+    </linearGradient>
+    <linearGradient id="centerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+  </defs>
+</svg>

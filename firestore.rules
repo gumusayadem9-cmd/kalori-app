@@ -1,0 +1,96 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global safety net - Default Deny Catch-All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- REUSABLE SECURITY PRIMITIVES ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Path Variable Hardening
+    function isValidId(id) {
+      return id is string 
+        && id.size() <= 128 
+        && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- STRUCTURAL VALIDATORS ---
+    function isValidUserProfile(data) {
+      return data.name is string && data.name.size() <= 100
+        && data.email is string && data.email.size() <= 150
+        && data.age is number && data.age >= 0 && data.age <= 150
+        && data.gender is string && data.gender.size() <= 20
+        && data.height is number && data.height >= 20 && data.height <= 300
+        && data.weight is number && data.weight >= 0 && data.weight <= 1000
+        && data.targetWeight is number && data.targetWeight >= 0 && data.targetWeight <= 1000
+        && data.activityLevel is string && data.activityLevel.size() <= 100;
+    }
+
+    function isValidDayLog(data) {
+      return data.date is string && data.date.size() <= 10
+        && data.meals is map
+        && data.waterConsumedMl is number && data.waterConsumedMl >= 0 && data.waterConsumedMl <= 20000
+        && (!data.keys().contains('summaryNote') || (data.summaryNote is string && data.summaryNote.size() <= 1000));
+    }
+
+    function isValidWeightLog(data) {
+      return data.date is string && data.date.size() <= 10
+        && data.weight is number && data.weight > 0 && data.weight < 1000;
+    }
+
+    // --- DATABASE COLLECTIONS PATH RULES ---
+
+    // 1. User Profiles
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUserProfile(incoming());
+      allow update: if isOwner(userId) && isValidUserProfile(incoming()) && (
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'name', 'email', 'age', 'gender', 'height', 'weight', 'targetWeight', 'activityLevel', 'currentTargets'
+        ])
+      );
+      allow delete: if isOwner(userId);
+
+      // 2. User Day Logs (Subcollection)
+      match /logs/{date} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(date) && isValidDayLog(incoming());
+        allow update: if isOwner(userId) && isValidId(date) && isValidDayLog(incoming()) && (
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'meals', 'waterConsumedMl', 'dailyTargets', 'summaryNote'
+          ])
+        );
+        allow delete: if isOwner(userId);
+      }
+
+      // 3. Weight Tracking (Subcollection)
+      match /weightLogs/{date} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(date) && isValidWeightLog(incoming());
+        allow update: if isOwner(userId) && isValidId(date) && isValidWeightLog(incoming()) && (
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'weight'
+          ])
+        );
+        allow delete: if isOwner(userId);
+      }
+    }
+  }
+}
